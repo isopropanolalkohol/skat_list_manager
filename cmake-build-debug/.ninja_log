@@ -1,0 +1,9 @@
+# ninja log v6
+8	1072	1748431413048363242	CMakeFiles/skat_list_manager.dir/main.cpp.o	6e766a4215e8cf24
+0	37	1747137584811605400	build.ninja	2583d709dc2a23d5
+7	762	1747906284752009491	CMakeFiles/skat_list_manager.dir/terminal_interface.cpp.o	e482452474e6ff50
+1	750	1748432445757179846	CMakeFiles/skat_list_manager.dir/database_api.cpp.o	10f478d125e48117
+750	823	1748432446506170756	skat_list_manager	1fd796b1bbdf271f
+1	272	1747303422019822846	CMakeFiles/skat_list_manager.dir/skat.cpp.o	a9ddac4e0989f528
+10	3619	1748449198911416849	CMakeFiles/skat_list_manager.dir/database_api.cpp.o	10f478d125e48117
+3619	3812	1748449202520445109	skat_list_manager	1fd796b1bbdf271f

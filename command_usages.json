@@ -1,0 +1,5 @@
+{
+  "usage": "The usage command is used to display the commands usage (which you used right now, so why are you even looking this one up?)\n Usage: \u001b[033musage <command_name>\u001b[0m",
+  "me": "This command is used to make entries to the database. The command gets all the details itself.\n Usage: \u001b[033mme\u001b[0m"
+}
+
