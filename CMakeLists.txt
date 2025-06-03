@@ -3,5 +3,10 @@ project(skat_list_manager)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(skat_list_manager main.cpp database_api.cpp terminal_interface.cpp skat.cpp)
+file(GLOB SOURCES "src/*.cpp")
+
+add_executable(skat_list_manager ${SOURCES})
 target_link_libraries(skat_list_manager mysqlcppconn)
+
+
+target_include_directories(skat_list_manager PRIVATE include)
