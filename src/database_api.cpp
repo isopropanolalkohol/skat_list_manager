@@ -7,10 +7,7 @@
 #include <cppconn/resultset.h>
 #include <cppconn/prepared_statement.h>
 #include <cppconn/statement.h>
-#include <cppconn/resultset_metadata.h>
 #include <mysql_driver.h>
-#include <mysql_error.h>
-
 #include "terminal_interface.h"
 
 DatabaseAPI::DatabaseAPI()
