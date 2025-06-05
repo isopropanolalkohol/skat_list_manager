@@ -322,6 +322,7 @@ COMMAND_RESULT cmd_make_entry(std::vector<std::string> args, DatabaseAPI& db)
           }
      }
      //DEBUG:
+     /*
      std::string username;
      try
      {
@@ -332,8 +333,9 @@ COMMAND_RESULT cmd_make_entry(std::vector<std::string> args, DatabaseAPI& db)
           return ERROR;
      }
      std::cout << "DEBUG ENTRY: Type: " << game.type << ", peaks: " << game.peaks << ", modifier: " << game.modifier.name << ", player: ";
-     std::cout << username << "(" << game.user_id << "), won: "<< game.won << std::endl;
+     std::cout << username << "(" << game.user_id << "), won: "<< game.won << std::endl;*/
      db.push_entry(game);
+     std::cout << "slm >: entry was successfully added." << std::endl;
      return SUCCESS;
 }
 command sh_make_entry("me", cmd_make_entry);
