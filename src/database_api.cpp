@@ -374,7 +374,7 @@ void DatabaseAPI::push_entry(GameEntry entry) const
         if (result_set->next())
         {
             int id = result_set->getInt(1);
-            std::cout << "Game found with id: " << id << std::endl;
+            //std::cout << "Game found with id: " << id << std::endl;
             sql::PreparedStatement* insert_query =
                 connection->prepareStatement("INSERT INTO played_games(playedGameID, playerID, listID, hasWon, time) VALUES (?,?,?,?, CURRENT_TIMESTAMP)");
             insert_query->setInt(1, id);
