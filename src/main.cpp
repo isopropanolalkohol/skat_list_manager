@@ -1,8 +1,3 @@
-#include <iostream>
-#include <vector>
-#include <cppconn/exception.h>
-
-#include "database_api.h"
 #include "terminal_interface.h"
 
 int main()
