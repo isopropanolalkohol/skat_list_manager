@@ -22,6 +22,8 @@ class command
 };
 std::vector<command> load_commands();
 
+void MainLoop();
+
 //main commands
 COMMAND_RESULT cmd_change_player_list(std::vector<std::string> args, DatabaseAPI& db); //the players are stored in a global variable - change the database
 COMMAND_RESULT cmd_get_player_list(std::vector<std::string> args, DatabaseAPI& db);

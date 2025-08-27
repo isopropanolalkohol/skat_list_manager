@@ -12,3 +12,8 @@
 4	712	1749119945340859142	CMakeFiles/skat_list_manager.dir/src/terminal_interface.cpp.o	8d949c5813fd79b4
 3	791	1749119945339859144	CMakeFiles/skat_list_manager.dir/src/database_api.cpp.o	fdf2245573837ff4
 791	865	1749119946127857530	skat_list_manager	68d4fa36c4e9f2cb
+2	345	1756318497636436272	CMakeFiles/skat_list_manager.dir/src/skat.cpp.o	44456233eb7b95a3
+2	557	1756318497636436272	CMakeFiles/skat_list_manager.dir/src/main.cpp.o	3c20ae1342930e9f
+3	717	1756318497637436267	CMakeFiles/skat_list_manager.dir/src/terminal_interface.cpp.o	8d949c5813fd79b4
+2	812	1756318497636436272	CMakeFiles/skat_list_manager.dir/src/database_api.cpp.o	fdf2245573837ff4
+812	888	1756318498446431964	skat_list_manager	68d4fa36c4e9f2cb
