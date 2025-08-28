@@ -1,0 +1,54 @@
+# --- Build-Verzeichnisse ---
+/build/
+/build-*/
+/cmake-build-*/
+/out/
+/bin/
+/lib/
+/obj/
+
+# --- CMake/Ninja/Make Artefakte ---
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json      # falls du die Datei behalten willst: diese Zeile löschen
+build.ninja
+rules.ninja
+.ninja_deps
+.ninja_log
+
+# --- Qt/Qt Creator generiert ---
+*_autogen/
+*-autogen/
+/moc_*.cpp
+/moc_*.h
+/ui_*.h
+/qrc_*.cpp
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.qbs.user.*
+.qmake.stash
+.qmake.cache
+CMakeLists.txt.user
+*.qmlc
+*.jsc
+
+# --- Editor/IDE ---
+.idea/
+.vscode/
+
+# --- System-/Sonstiges ---
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+*.swp
+*.swo
+*~
+.cache/
+
