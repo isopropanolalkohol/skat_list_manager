@@ -20,7 +20,7 @@ build.ninja
 rules.ninja
 .ninja_deps
 .ninja_log
-
+cmake-build-debug/
 # --- Qt/Qt Creator generiert ---
 *_autogen/
 *-autogen/
