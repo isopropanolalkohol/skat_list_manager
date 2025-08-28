@@ -17,7 +17,7 @@ COMMAND_RESULT command::execute(std::vector<std::string> args, DatabaseAPI& db) 
      return command_function(std::move(args), db);
 }
 
-void MainLoop()
+void CLI_MainLoop()
 
 {
     //this acts like a terminal CLI interface. A window like system will follow soon.

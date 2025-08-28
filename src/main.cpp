@@ -1,11 +1,13 @@
-#include "terminal_interface.h"
+#include <QApplication>
+#include "main_window.h"
 
-int main()
+int main(int argc, char *argv[])
 {
-    MainLoop();
-}
+    QApplication app(argc, argv);
+    app.setApplicationName("Skat List Manager");
+    app.setOrganizationName("YourOrg");
 
-// TIP See CLion help at <a
-// href="https://www.jetbrains.com/help/clion/">jetbrains.com/help/clion/</a>.
-//  Also, you can try interactive lessons for CLion by selecting
-//  'Help | Learn IDE Features' from the main menu.
+    MainWindow w;
+    w.show();
+    return app.exec();
+}
