@@ -10,15 +10,18 @@
 #include <QMenuBar>
 #include <QStatusBar>
 #include <QMessageBox>
+#include "data_service.h"
 
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
     public:
-    explicit MainWindow(QWidget* parent = nullptr);
+    explicit MainWindow(DataService& ds, QWidget* parent = nullptr);
 
     private:
+    DataService& service_;
+
     void createActions();
     void buildMenus();
     void buildStatusBar();

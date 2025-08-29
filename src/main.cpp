@@ -1,5 +1,7 @@
 #include <QApplication>
 #include "main_window.h"
+#include "database_api.h"
+#include "data_service.h"
 
 int main(int argc, char *argv[])
 {
@@ -7,8 +9,9 @@ int main(int argc, char *argv[])
     QGuiApplication::setWindowIcon(QIcon(":icons/desktop.png"));
     app.setApplicationName("Skat List Manager");
     app.setOrganizationName("GeisslerInc");
-
-    MainWindow w;
+    DatabaseAPI api;
+    DataService ds{api};
+    MainWindow w{ds};
     w.show();
     return app.exec();
 }

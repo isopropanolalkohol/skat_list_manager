@@ -11,8 +11,10 @@
 class DatabaseAPI
 {
     public:
-    DatabaseAPI();
+    explicit DatabaseAPI();
     ~DatabaseAPI();
+    DatabaseAPI(const DatabaseAPI&) = delete;
+    DatabaseAPI& operator=(const DatabaseAPI&) = delete;
 
     void startTransaction() const;
     void commitTransaction() const;

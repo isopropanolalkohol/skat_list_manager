@@ -228,7 +228,17 @@ int DatabaseAPI::getUserId(std::string username) const
 std::unordered_map<std::string, int> DatabaseAPI::getAllUserIds() const
 {
     std::unordered_map<std::string, int> result;
-
+    sql::Statement* userQuery = connection_->createStatement();
+    sql::ResultSet* res = userQuery->executeQuery("SELECT playerID, name FROM players");
+    if (res->next())
+    {
+        int id = res->getInt(1);
+        std::string name = res->getString(2);
+        result[name] = id;
+    }
+    delete userQuery;
+    delete res;
+    return result;
 }
 
 std::string DatabaseAPI::getUserName(int id) const

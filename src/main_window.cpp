@@ -4,7 +4,7 @@
 #include "main_window.h"
 #include <QWidget>
 
-MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
+MainWindow::MainWindow(DataService& ds, QWidget* parent) : QMainWindow(parent), service_(ds) {
     setWindowTitle("Skat-Listen-Manager");
     resize(1100, 700);
 
