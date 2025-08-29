@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     auto* central = new QWidget(this);
     central->setObjectName("central");
     setCentralWidget(central);
+    refreshTable();
 }
 
 void MainWindow::createActions()
@@ -33,6 +34,9 @@ void MainWindow::createActions()
     actAbout = new QAction(tr("Über…"), this);
 
     actEditCredentials = new QAction(tr("Einstellungen"), this);
+
+    actEditPlayers = new QAction(tr("Spieler"), this);
+
 }
 
 void MainWindow::buildMenus()
@@ -45,6 +49,7 @@ void MainWindow::buildMenus()
 
     menuDatabase = menuBar()->addMenu(tr("Datenbank"));
     menuDatabase->addAction(actEditCredentials);
+    menuDatabase->addAction(actEditPlayers);
 
     menuHelp = menuBar()->addMenu(tr("Hilfe"));
     menuHelp->addAction(actAbout);
@@ -62,6 +67,7 @@ void MainWindow::connectActions()
     connect(actQuit,  &QAction::triggered, this, &MainWindow::onQuit);
     connect(actAbout, &QAction::triggered, this, &MainWindow::onAbout);
     connect(actEditCredentials, &QAction::triggered, this, &MainWindow::onEditCredentials);
+    connect(actEditPlayers, &QAction::triggered, this, &MainWindow::onEditPlayers);
 }
 
 void MainWindow::onOpen()
@@ -84,4 +90,14 @@ void MainWindow::onAbout()
 void MainWindow::onEditCredentials()
 {
     // TODO: Enter flight reacts gif
+}
+void MainWindow::onEditPlayers()
+{
+
+}
+
+
+void MainWindow::refreshTable()
+{
+    auto rows = nullptr;
 }

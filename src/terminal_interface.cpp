@@ -27,12 +27,12 @@ void CLI_MainLoop()
 
     std::cout << "slm >: establishing connection...\n";
     DatabaseAPI db;
-    db.start_transaction();
+    db.startTransaction();
     std::vector<command> commands = load_commands();
-    db.change_list();
-    db.create_new_table();
-    db.set_list_id();
-    db.show_logged_in_users();
+    db.changeList();
+    db.createNewTable();
+    db.setListId();
+    db.showLoggedInUsers();
     //main loop, task is to answer to commands on the command line.
 
     std::string input;
@@ -85,11 +85,11 @@ void CLI_MainLoop()
             switch (ans == "Y")
             {
                 case true:
-                    db.commit_transaction();
+                    db.commitTransaction();
                     std::cout << "slm >: \033[32msaved changes.\033[0m" << std::endl;
                     break;
                 case false:
-                    db.rollback_transaction();
+                    db.rollbackTransaction();
                     std::cout << "slm >: \033[31maborted transaction.\033[0m" << std::endl;
                     break;
                 default:
@@ -126,10 +126,10 @@ COMMAND_RESULT cmd_change_player_list(std::vector<std::string> args, DatabaseAPI
           return ERROR;
      }
      std::cout << "slm >: all logged in players will be logged out." << std::endl;
-     db.clear_users();
-     db.change_list();
-     db.create_new_table();
-     db.set_list_id();
+     db.clearUsers();
+     db.changeList();
+     db.createNewTable();
+     db.setListId();
      return SUCCESS;
 }
 command sh_change_player_list("cpl", cmd_change_player_list);
@@ -355,7 +355,7 @@ COMMAND_RESULT cmd_make_entry(std::vector<std::string> args, DatabaseAPI& db)
      while (true)
      {
           std::cout << "slm >: what user played the game?\n0: abort\n" << std::endl;
-          std::vector<std::string> players = db.get_users();
+          std::vector<std::string> players = db.getUsers();
           for (int i = 0; i < players.size(); i++)
           {
                std::cout << i+1 << ": " << players[i] << std::endl;
@@ -382,7 +382,7 @@ COMMAND_RESULT cmd_make_entry(std::vector<std::string> args, DatabaseAPI& db)
                continue;
           }
           if (int_choice == 0) return ERROR;
-          game.user_id = db.get_user_id(players[int_choice-1]);
+          game.user_id = db.getUserId(players[int_choice-1]);
           std::cout << "user id: " << game.user_id << std::endl;
           break;
      }
@@ -424,7 +424,7 @@ COMMAND_RESULT cmd_make_entry(std::vector<std::string> args, DatabaseAPI& db)
      }
      std::cout << "DEBUG ENTRY: Type: " << game.type << ", peaks: " << game.peaks << ", modifier: " << game.modifier.name << ", player: ";
      std::cout << username << "(" << game.user_id << "), won: "<< game.won << std::endl;*/
-     db.push_entry(game);
+     db.pushEntry(game);
      std::cout << "slm >: entry was successfully added." << std::endl;
      return SUCCESS;
 }
@@ -437,7 +437,7 @@ COMMAND_RESULT cmd_get_points(std::vector<std::string> args, const DatabaseAPI &
           std::cout << "slm >: invalid number of arguments." << std::endl;
           return ERROR;
      }
-     std::unordered_map<std::string, int> points = db.get_points();
+     std::unordered_map<std::string, int> points = db.getPoints();
      for (const auto& point : points)
      {
           std::cout << point.first << ": " << point.second << std::endl;
@@ -451,8 +451,8 @@ COMMAND_RESULT cmd_save(std::vector<std::string> args, const DatabaseAPI &db)
      {
           return ERROR;
      }
-     db.commit_transaction();
-     db.start_transaction();
+     db.commitTransaction();
+     db.startTransaction();
      std::cout << "slm >: saved!" << std::endl;
      return SUCCESS;
 }
@@ -464,7 +464,7 @@ COMMAND_RESULT cmd_get_played_games(std::vector<std::string> args, const Databas
      {
           return ERROR;
      }
-     std::vector<std::string> entries = db.get_entries();
+     std::vector<std::string> entries = db.getEntries();
      for (const auto& entry : entries)
      {
           std::cout << entry << std::endl;

@@ -29,6 +29,7 @@ class MainWindow : public QMainWindow
     QAction* actQuit = nullptr;
     QAction* actAbout = nullptr;
     QAction* actEditCredentials = nullptr;
+    QAction* actEditPlayers = nullptr;
     QMenu*   menuFile = nullptr;
     QMenu*   menuDatabase = nullptr;
     QMenu*   menuHelp = nullptr;
@@ -39,4 +40,6 @@ class MainWindow : public QMainWindow
     void onQuit();
     void onAbout();
     void onEditCredentials();
+    void onEditPlayers();
+    void refreshTable();
 };

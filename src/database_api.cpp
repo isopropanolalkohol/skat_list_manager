@@ -15,10 +15,10 @@ DatabaseAPI::DatabaseAPI()
     try
     {
         sql::Driver* driver = sql::mysql::get_driver_instance();
-        connection = driver->connect("tcp://127.0.0.1:3306", "skat_api", "skat_api");
-        connection->setSchema("skat_lists");
+        connection_ = driver->connect("tcp://127.0.0.1:3306", "skat_api", "skat_api");
+        connection_->setSchema("skat_lists");
         std::cout << "slm >: Connected successfully!" << std::endl;
-        current_list_id = -1;
+        currentListId_ = -1;
     } catch (sql::SQLException& e)
     {
         std::cout << "slm >: error occurred. Database was not opened. Error: " << e.what() << std::endl;
@@ -27,16 +27,16 @@ DatabaseAPI::DatabaseAPI()
 }
 DatabaseAPI::~DatabaseAPI()
 {
-    delete connection;
-    std::cout << "slm >: closed database connection" << std::endl;
+    delete connection_;
+    std::cout << "slm >: closed database connection_" << std::endl;
     std::cout << "slm >: Bye!" << std::endl;
 
 }
-void DatabaseAPI::start_transaction() const
+void DatabaseAPI::startTransaction() const
 {
     try
     {
-        sql::Statement* stmt = connection->createStatement();
+        sql::Statement* stmt = connection_->createStatement();
         stmt->execute("START TRANSACTION");
         delete stmt;
     } catch (sql::SQLException& e)
@@ -45,31 +45,31 @@ void DatabaseAPI::start_transaction() const
     }
 
 }
-void DatabaseAPI::commit_transaction() const
+void DatabaseAPI::commitTransaction() const
 {
-    sql::Statement* stmt = connection->createStatement();
+    sql::Statement* stmt = connection_->createStatement();
     stmt->execute("COMMIT");
     delete stmt;
 }
-void DatabaseAPI::rollback_transaction() const
+void DatabaseAPI::rollbackTransaction() const
 {
-    sql::Statement* stmt = connection->createStatement();
+    sql::Statement* stmt = connection_->createStatement();
     stmt->execute("ROLLBACK");
     delete stmt;
 }
 
 
 
-void DatabaseAPI::create_users_if_dont_exist() const
+void DatabaseAPI::createUsersIfDontExist() const
 {
-    for (const auto& player : players)
+    for (const auto& player : players_)
     {
-        sql::PreparedStatement* prepared_statement = connection->prepareStatement("SELECT * FROM players WHERE name = ?");
+        sql::PreparedStatement* prepared_statement = connection_->prepareStatement("SELECT * FROM players WHERE name = ?");
         prepared_statement->setString(1, to_upper(player));
         sql::ResultSet* result_set = prepared_statement->executeQuery();
         if (!result_set->next())
         {
-            create_user(player);
+            createUser(player);
         }
         delete result_set;
         delete prepared_statement;
@@ -77,19 +77,19 @@ void DatabaseAPI::create_users_if_dont_exist() const
 }
 
 
-void DatabaseAPI::create_new_table() const
+void DatabaseAPI::createNewTable() const
 {
-    create_users_if_dont_exist();
+    createUsersIfDontExist();
     //server abfragen ob Tabelle existiert
-    if (get_table_id() == 0)
+    if (getTableId() == 0)
     {
         std::cout << "slm >: Creating new table..." << std::endl;
         try
         {
-            sql::PreparedStatement* prep_statement = connection->prepareStatement("INSERT INTO lists(name) VALUES (?)");
-            prep_statement->setString(1, getTableName(players));
+            sql::PreparedStatement* prep_statement = connection_->prepareStatement("INSERT INTO lists(name) VALUES (?)");
+            prep_statement->setString(1, getTableName(players_));
             prep_statement->execute();
-            sql::Statement* last_id_request = connection->createStatement();
+            sql::Statement* last_id_request = connection_->createStatement();
             sql::ResultSet* res = last_id_request->executeQuery("SELECT LAST_INSERT_ID()");
             int last_insert_id;
             if (res->next())
@@ -105,15 +105,15 @@ void DatabaseAPI::create_new_table() const
             delete last_id_request;
             delete prep_statement;
             delete res;
-            for (const auto& player : players)
+            for (const auto& player : players_)
             {
-                int user_id = get_user_id(player);
+                int user_id = getUserId(player);
                 if (user_id == 0)
                 {
                     std::cout << "Error occurred while creating table (ERROR10011)" << std::endl;
                     return;
                 }
-                /*sql::PreparedStatement* get_user_id_query = connection->prepareStatement("SELECT playerID FROM players WHERE name = ?");
+                /*sql::PreparedStatement* get_user_id_query = connection_->prepareStatement("SELECT playerID FROM players WHERE name = ?");
                 get_user_id_query->setString(1, player);
                 sql::ResultSet* result = get_user_id_query->executeQuery();
                 if (!result->next())
@@ -122,7 +122,7 @@ void DatabaseAPI::create_new_table() const
                     delete get_user_id_query;
                     delete result;
                 }*/
-                sql::PreparedStatement* insert_into_list = connection->prepareStatement("INSERT INTO players_lists(playerID, listID) VALUES (?, ?)");
+                sql::PreparedStatement* insert_into_list = connection_->prepareStatement("INSERT INTO players_lists(playerID, listID) VALUES (?, ?)");
                 insert_into_list->setInt(1, user_id);
                 insert_into_list->setInt(2, last_insert_id);
                 insert_into_list->executeQuery();
@@ -138,19 +138,19 @@ void DatabaseAPI::create_new_table() const
 }
 
 
-void DatabaseAPI::delete_table() const
+void DatabaseAPI::deleteTable() const
 {
 
 }
 
-std::unordered_map<std::string, int> DatabaseAPI::get_points() const
+std::unordered_map<std::string, int> DatabaseAPI::getPoints() const
 {
     std::unordered_map<std::string, int> result;
-    for (const auto& player : players)
+    for (const auto& player : players_)
     {
-        sql::PreparedStatement* points_query = connection->prepareStatement("SELECT SUM((played_games.hasWon*3-2)*possibleGames.value) AS 'points' FROM played_games JOIN possibleGames ON played_games.playedGameID = possibleGames.gameID WHERE playerId = ? AND listID = ?");
-        points_query->setInt(1, get_user_id(player));
-        points_query->setInt(2, current_list_id);
+        sql::PreparedStatement* points_query = connection_->prepareStatement("SELECT SUM((played_games.hasWon*3-2)*possibleGames.value) AS 'points' FROM played_games JOIN possibleGames ON played_games.playedGameID = possibleGames.gameID WHERE playerId = ? AND listID = ?");
+        points_query->setInt(1, getUserId(player));
+        points_query->setInt(2, currentListId_);
         sql::ResultSet* result_set = points_query->executeQuery();
         if (result_set->next())
         {
@@ -162,18 +162,18 @@ std::unordered_map<std::string, int> DatabaseAPI::get_points() const
     return result;
 }
 //should work, returns 0 if doesn't exist
-int DatabaseAPI::get_table_id() const
+int DatabaseAPI::getTableId() const
 {
     try
     {
-        std::string request_string = "SELECT listID FROM players_lists WHERE playerID IN " + generate_tuple_with_question_mark(players.size())
+        std::string request_string = "SELECT listID FROM players_lists WHERE playerID IN " + generate_tuple_with_question_mark(players_.size())
                                     + "GROUP BY listID HAVING COUNT(DISTINCT playerID) = ?"; //this query should work
-        sql::PreparedStatement* all_players_in_list = connection->prepareStatement(request_string);
+        sql::PreparedStatement* all_players_in_list = connection_->prepareStatement(request_string);
         int variable_count = 1;
-        for (const auto& player : players)
+        for (const auto& player : players_)
         {
             //get each id
-            sql::PreparedStatement* user_id_query = connection->prepareStatement("SELECT playerID FROM players WHERE name = ?");
+            sql::PreparedStatement* user_id_query = connection_->prepareStatement("SELECT playerID FROM players WHERE name = ?");
             user_id_query->setString(1, to_upper(player));
             sql::ResultSet* res = user_id_query->executeQuery();
             if (!res->next())
@@ -190,7 +190,7 @@ int DatabaseAPI::get_table_id() const
             delete user_id_query;
             delete res;
         }
-        all_players_in_list->setInt(variable_count, players.size());
+        all_players_in_list->setInt(variable_count, players_.size());
         sql::ResultSet* result_set = all_players_in_list->executeQuery();
         if (result_set->next())
         {
@@ -208,9 +208,9 @@ int DatabaseAPI::get_table_id() const
         return true;
     }
 }
-int DatabaseAPI::get_user_id(std::string username) const
+int DatabaseAPI::getUserId(std::string username) const
 {
-    sql::PreparedStatement* user_id_query = connection->prepareStatement("SELECT playerID FROM players WHERE name = ?");
+    sql::PreparedStatement* user_id_query = connection_->prepareStatement("SELECT playerID FROM players WHERE name = ?");
     user_id_query->setString(1, to_upper(username));
     sql::ResultSet* res = user_id_query->executeQuery();
     int id;
@@ -225,9 +225,15 @@ int DatabaseAPI::get_user_id(std::string username) const
     delete res;
     return -1;
 }
-std::string DatabaseAPI::get_user_name(int id) const
+std::unordered_map<std::string, int> DatabaseAPI::getAllUserIds() const
 {
-    sql::PreparedStatement* get_name_query = connection->prepareStatement("SELECT name FROM players WHERE playerID = ?");
+    std::unordered_map<std::string, int> result;
+
+}
+
+std::string DatabaseAPI::getUserName(int id) const
+{
+    sql::PreparedStatement* get_name_query = connection_->prepareStatement("SELECT name FROM players WHERE playerID = ?");
     get_name_query->setInt(1, id);
     sql::ResultSet* res = get_name_query->executeQuery();
     std::string name;
@@ -242,12 +248,12 @@ std::string DatabaseAPI::get_user_name(int id) const
 
 
 //checks if user already exists, and creates if not
-void DatabaseAPI::create_user(std::string username) const
+void DatabaseAPI::createUser(std::string username) const
 {
     std::cout << "slm >: creating new user..." << std::endl;
     try
     {
-        sql::PreparedStatement* prepared_statement = connection->prepareStatement("SELECT * FROM players WHERE name = ?");
+        sql::PreparedStatement* prepared_statement = connection_->prepareStatement("SELECT * FROM players WHERE name = ?");
         prepared_statement->setString(1, to_upper(username));
         sql::ResultSet* result_set = prepared_statement->executeQuery();
         if (result_set->next())
@@ -255,7 +261,7 @@ void DatabaseAPI::create_user(std::string username) const
             std::cout << "slm >: user already exists!" << std::endl;
         } else
         {
-            sql::PreparedStatement* create_user_statement = connection->prepareStatement("INSERT INTO players(name) VALUES (?)");
+            sql::PreparedStatement* create_user_statement = connection_->prepareStatement("INSERT INTO players(name) VALUES (?)");
             create_user_statement->setString(1, to_upper(username));
             create_user_statement->execute();
             delete create_user_statement;
@@ -269,43 +275,43 @@ void DatabaseAPI::create_user(std::string username) const
     }
 }
 
-void DatabaseAPI::login_user(const std::string& username)
+void DatabaseAPI::loginUser(const std::string& username)
 {
-    if (username.empty() || std::find(players.begin(), players.end(), username) != players.end())
+    if (username.empty() || std::find(players_.begin(), players_.end(), username) != players_.end())
     {
         std::cout << "slm >: user already exists or invalid name" << std::endl;
     }
     else
     {
-        players.push_back(username);
+        players_.push_back(username);
     }
 }
 
-void DatabaseAPI::logout_user(std::string username)
+void DatabaseAPI::logoutUser(std::string username)
 {
-    players.erase(std::remove(players.begin(), players.end(), username));
+    players_.erase(std::remove(players_.begin(), players_.end(), username));
 }
-void DatabaseAPI::clear_users()
+void DatabaseAPI::clearUsers()
 {
-    players.clear();
+    players_.clear();
 }
 
 
-void DatabaseAPI::show_logged_in_users() const
+void DatabaseAPI::showLoggedInUsers() const
 {
     std::cout << "slm >: logged in users are:";
-    for (const auto& player : players)
+    for (const auto& player : players_)
     {
         std::cout << " " + player;
     }
     std::cout << std::endl;
 }
 
-void DatabaseAPI::set_list_id()
+void DatabaseAPI::setListId()
 {
-    if (int id = get_table_id(); id != 0)
+    if (int id = getTableId(); id != 0)
     {
-        current_list_id = id;
+        currentListId_ = id;
         return;
     }
     else
@@ -315,12 +321,12 @@ void DatabaseAPI::set_list_id()
 }
 
 
-void DatabaseAPI::change_list()
+void DatabaseAPI::changeList()
 {
-    if (!players.empty())
+    if (!players_.empty())
     {
         std::cout << "slm >: the current list in use contains the players:";
-        for (const auto& player : players)
+        for (const auto& player : players_)
         {
             std::cout << " " << to_upper(player);
         }
@@ -342,7 +348,7 @@ void DatabaseAPI::change_list()
             std::vector<std::string> usernames = tokenize(to_log_in_users);
             for (const auto username : usernames)
             {
-                login_user(to_upper(username));
+                loginUser(to_upper(username));
             }
             break;
         }
@@ -358,12 +364,12 @@ void DatabaseAPI::change_list()
     }
 }
 
-void DatabaseAPI::push_entry(GameEntry entry) const
+void DatabaseAPI::pushEntry(GameEntry entry) const
 {
     try
     {
         //get id
-        sql::PreparedStatement* get_id_query = connection->prepareStatement(
+        sql::PreparedStatement* get_id_query = connection_->prepareStatement(
             "SELECT gameID FROM possibleGames WHERE value = ? AND typeName = ? AND peaks = ? AND modifierName = ?");
         get_id_query->setInt(1,calculate_game_value(entry));
         get_id_query->setString(2, return_type_name(entry.type));
@@ -376,10 +382,10 @@ void DatabaseAPI::push_entry(GameEntry entry) const
             int id = result_set->getInt(1);
             //std::cout << "Game found with id: " << id << std::endl;
             sql::PreparedStatement* insert_query =
-                connection->prepareStatement("INSERT INTO played_games(playedGameID, playerID, listID, hasWon, time) VALUES (?,?,?,?, CURRENT_TIMESTAMP)");
+                connection_->prepareStatement("INSERT INTO played_games(playedGameID, playerID, listID, hasWon, time) VALUES (?,?,?,?, CURRENT_TIMESTAMP)");
             insert_query->setInt(1, id);
             insert_query->setInt(2, entry.user_id);
-            insert_query->setInt(3, current_list_id);
+            insert_query->setInt(3, currentListId_);
             insert_query->setBoolean(4, entry.won);
             insert_query->executeQuery();
             delete insert_query;
@@ -396,13 +402,13 @@ void DatabaseAPI::push_entry(GameEntry entry) const
     }
 }
 
-std::vector<std::string> DatabaseAPI::get_entries() const
+std::vector<std::string> DatabaseAPI::getEntries() const
 {
     std::vector<std::string> entries;
     try
     {
-        sql::PreparedStatement* get_games_query = connection->prepareStatement("SELECT players.name, possibleGames.typeName, possibleGames.peaks, possibleGames.modifierName, possibleGames.value, played_games.time, played_games.hasWon FROM played_games JOIN players ON players.playerID = played_games.playerID JOIN possibleGames ON played_games.playedGameID = possibleGames.gameID WHERE listID = ? ORDER BY played_games.gameID DESC LIMIT 10");
-        get_games_query->setInt(1, current_list_id);
+        sql::PreparedStatement* get_games_query = connection_->prepareStatement("SELECT players.name, possibleGames.typeName, possibleGames.peaks, possibleGames.modifierName, possibleGames.value, played_games.time, played_games.hasWon FROM played_games JOIN players ON players.playerID = played_games.playerID JOIN possibleGames ON played_games.playedGameID = possibleGames.gameID WHERE listID = ? ORDER BY played_games.gameID DESC LIMIT 10");
+        get_games_query->setInt(1, currentListId_);
         sql::ResultSet* result_set = get_games_query->executeQuery();
         while (result_set->next())
         {
@@ -423,13 +429,13 @@ std::vector<std::string> DatabaseAPI::get_entries() const
     return entries;
 }
 
-int DatabaseAPI::get_list_id() const
+int DatabaseAPI::getListId() const
 {
-    return current_list_id;
+    return currentListId_;
 }
-std::vector<std::string> DatabaseAPI::get_users() const
+std::vector<std::string> DatabaseAPI::getUsers() const
 {
-    return players;
+    return players_;
 }
 
 
