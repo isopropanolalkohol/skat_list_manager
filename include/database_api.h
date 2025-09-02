@@ -41,11 +41,12 @@ class DatabaseAPI
     void setListId();
     void changeList();
     void pushEntry(GameEntry entry) const;
-    std::vector<std::string> getEntries() const;
+    [[nodiscard]] std::vector<std::string> getEntriesString() const;
+    [[nodiscard]] std::vector<TableGameEntry> getEntries(int n) const;
 
 //getters
     int getListId() const;
-    std::vector<std::string> getUsers() const;
+    [[nodiscard]] std::vector<std::string> getUsers() const;
     private:
     sql::Connection* connection_;
     std::vector<std::string> players_;

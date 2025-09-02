@@ -42,6 +42,17 @@ struct GameEntry
     bool won{};
 };
 
+struct TableGameEntry
+{
+    std::string playerName;
+    std::string GameType;
+    int peaks;
+    std::string ModifierName;
+    int value;
+    bool hasWon;
+    std::string dateTime;
+};
+
 int return_base_value(GameType type);
 
 int calculate_game_value(GameEntry entry);

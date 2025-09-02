@@ -13,10 +13,11 @@ MainWindow::MainWindow(DataService& ds, QWidget* parent) : QMainWindow(parent), 
     buildStatusBar();
     connectActions();
 
-    auto* central = new QWidget(this);
-    central->setObjectName("central");
-    setCentralWidget(central);
-    refreshTable();
+    model_   = new EntriesTableModel(service_, this);
+    central_ = new CentralView(this);
+    central_->setModel(model_);
+    setCentralWidget(central_);
+    central_->refresh();
 }
 
 void MainWindow::createActions()

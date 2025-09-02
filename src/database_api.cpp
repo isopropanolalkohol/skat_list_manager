@@ -412,7 +412,7 @@ void DatabaseAPI::pushEntry(GameEntry entry) const
     }
 }
 
-std::vector<std::string> DatabaseAPI::getEntries() const
+std::vector<std::string> DatabaseAPI::getEntriesString() const
 {
     std::vector<std::string> entries;
     try
@@ -433,6 +433,36 @@ std::vector<std::string> DatabaseAPI::getEntries() const
         delete result_set;
         delete get_games_query;
     } catch (sql::SQLException& e)
+    {
+        std::cout << "slm >: error occurred: " << e.what() << std::endl;
+    }
+    return entries;
+}
+
+std::vector<TableGameEntry> DatabaseAPI::getEntries(const int n) const
+{
+    std::vector<TableGameEntry> entries;
+    try
+    {
+        sql::PreparedStatement* get_games_query = connection_->prepareStatement("SELECT players.name, played_games.hasWon, possibleGames.typeName, possibleGames.peaks, possibleGames.modifierName, possibleGames.value, played_games.time FROM played_games JOIN possibleGames ON played_games.playedGameID = possibleGames.gameID JOIN players ON played_games.playerID = players.playerID WHERE played_games.listID = ? ORDER BY played_games.time DESC LIMIT ?");
+        get_games_query->setInt(1, currentListId_);
+        get_games_query->setInt(2, n);
+        sql::ResultSet* result_set = get_games_query->executeQuery();
+        while (result_set->next())
+        {
+            TableGameEntry entry;
+            entry.playerName = result_set->getString(1);
+            entry.hasWon = result_set->getBoolean(2);
+            entry.GameType = result_set->getString(3);
+            entry.peaks = result_set->getInt(4);
+            entry.ModifierName = result_set->getString(5);
+            entry.value = result_set->getInt(6);
+            entry.dateTime = result_set->getString(7);
+            entries.push_back(entry);
+        }
+        delete result_set;
+        delete get_games_query;
+    } catch(sql::SQLException& e)
     {
         std::cout << "slm >: error occurred: " << e.what() << std::endl;
     }

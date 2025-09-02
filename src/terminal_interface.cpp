@@ -464,7 +464,7 @@ COMMAND_RESULT cmd_get_played_games(std::vector<std::string> args, const Databas
      {
           return ERROR;
      }
-     std::vector<std::string> entries = db.getEntries();
+     std::vector<std::string> entries = db.getEntriesString();
      for (const auto& entry : entries)
      {
           std::cout << entry << std::endl;

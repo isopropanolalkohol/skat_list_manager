@@ -10,7 +10,10 @@
 #include <QMenuBar>
 #include <QStatusBar>
 #include <QMessageBox>
+
+#include "central_view.h"
 #include "data_service.h"
+#include "entries_table_model.h"
 
 
 class MainWindow : public QMainWindow
@@ -21,6 +24,9 @@ class MainWindow : public QMainWindow
 
     private:
     DataService& service_;
+
+    EntriesTableModel* model_ = nullptr;
+    CentralView* central_ = nullptr;
 
     void createActions();
     void buildMenus();
