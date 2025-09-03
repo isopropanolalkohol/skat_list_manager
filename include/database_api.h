@@ -42,7 +42,7 @@ class DatabaseAPI
     void changeList();
     void pushEntry(GameEntry entry) const;
     [[nodiscard]] std::vector<std::string> getEntriesString() const;
-    [[nodiscard]] std::vector<TableGameEntry> getEntries(int n) const;
+    [[nodiscard]] std::vector<TableGameEntry> getEntries(int limit, int offset) const;
 
 //getters
     int getListId() const;

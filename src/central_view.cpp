@@ -29,7 +29,22 @@ void CentralView::setModel(EntriesTableModel *model)
     table_->setModel(model_);
 }
 
-void CentralView::refresh()
+void CentralView::refresh() const
 {
     if (model_) model_->reload();
+    /*qDebug() << "[after reload] rows =" << model_->rowCount()
+         << "canFetchMore =" << model_->canFetchMore({});*/
+}
+void CentralView::prefetchIfNeeded()
+{
+    if (!model_) return;
+    const int vis = table_->viewport()->height()
+                  / table_->verticalHeader()->defaultSectionSize();
+    while (model_->canFetchMore({}) && model_->rowCount({}) < vis * 2)
+    {
+        model_->fetchMore({});
+    }
+    /*
+    qDebug() << "[prefetch] rows =" << model_->rowCount()
+         << "canFetchMore =" << model_->canFetchMore({});*/
 }

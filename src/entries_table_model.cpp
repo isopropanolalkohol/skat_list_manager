@@ -58,7 +58,45 @@ QVariant EntriesTableModel::headerData(int section, Qt::Orientation o, int role)
 
 void EntriesTableModel::reload()
 {
+    if (loading_ || !ready_) return;
+    loading_ = true;
     beginResetModel();
-    rows_ = ds_.getEntries();
+    rows_.clear();
+    lastId_ = INT_MAX;
+    auto first = ds_.getEntries(pageSize_, lastId_);
+    rows_.insert(rows_.end(), first.begin(), first.end());
+    hasMore_ = (static_cast<int>(first.size()) == pageSize_);
+    if (!first.empty()) lastId_ = first.back().id;
+
     endResetModel();
+    loading_ = false;
+}
+
+bool EntriesTableModel::canFetchMore(const QModelIndex& parent) const {
+    return !parent.isValid() && hasMore_ && !loading_;
+}
+
+void EntriesTableModel::fetchMore(const QModelIndex &parent)
+{
+    if (parent.isValid() || !hasMore_ || loading_ || !ready_) return;
+    loading_ = true;
+    auto more = ds_.getEntries(pageSize_,lastId_);
+    const int start = static_cast<int>(rows_.size());
+    const int count = static_cast<int>(more.size());
+    if (count > 0) {
+        beginInsertRows(QModelIndex(), start, start + count - 1);
+        rows_.insert(rows_.end(), more.begin(), more.end());
+        endInsertRows();
+    /*
+        qDebug() << "[fetchMore] start: rows =" << rows_.size()
+         << "hasMore =" << hasMore_ << "loading =" << loading_;*/
+        lastId_ = rows_.back().id;
+    }
+    if (count < pageSize_) hasMore_ = false;
+    loading_ = false;
+}
+
+void EntriesTableModel::setReady(const bool r)
+{
+    ready_ = r;
 }

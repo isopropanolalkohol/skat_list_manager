@@ -51,6 +51,7 @@ struct TableGameEntry
     int value;
     bool hasWon;
     std::string dateTime;
+    int id;
 };
 
 int return_base_value(GameType type);

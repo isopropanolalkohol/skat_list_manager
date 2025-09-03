@@ -15,7 +15,8 @@ class CentralView : public QWidget
     public:
     explicit CentralView(QWidget *parent = nullptr);
     void setModel(EntriesTableModel *model);
-    void refresh();
+    void refresh() const;
+    void prefetchIfNeeded();
 
     private:
     QTableView *table_ = nullptr;

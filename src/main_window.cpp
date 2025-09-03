@@ -3,6 +3,9 @@
 //
 #include "main_window.h"
 #include <QWidget>
+#include <QTimer>
+
+#include "players_dialog.h"
 
 MainWindow::MainWindow(DataService& ds, QWidget* parent) : QMainWindow(parent), service_(ds) {
     setWindowTitle("Skat-Listen-Manager");
@@ -12,12 +15,11 @@ MainWindow::MainWindow(DataService& ds, QWidget* parent) : QMainWindow(parent), 
     buildMenus();
     buildStatusBar();
     connectActions();
-
     model_   = new EntriesTableModel(service_, this);
     central_ = new CentralView(this);
     central_->setModel(model_);
     setCentralWidget(central_);
-    central_->refresh();
+    QTimer::singleShot(0, this, &MainWindow::onEditPlayers);
 }
 
 void MainWindow::createActions()
@@ -28,6 +30,9 @@ void MainWindow::createActions()
     actClose = new QAction(tr("Schließen"), this);
     actClose->setShortcut(QKeySequence::Close);
     actClose->setEnabled(false);
+
+    actSave = new QAction(tr("Speichern"), this);
+    actSave->setShortcut(QKeySequence::Save);
 
     actQuit  = new QAction(tr("Beenden"), this);
     actQuit->setShortcut(QKeySequence::Quit);
@@ -47,6 +52,7 @@ void MainWindow::buildMenus()
     menuFile->addAction(actClose);
     menuFile->addSeparator();
     menuFile->addAction(actQuit);
+    menuFile->addAction(actSave);
 
     menuDatabase = menuBar()->addMenu(tr("Datenbank"));
     menuDatabase->addAction(actEditCredentials);
@@ -69,6 +75,7 @@ void MainWindow::connectActions()
     connect(actAbout, &QAction::triggered, this, &MainWindow::onAbout);
     connect(actEditCredentials, &QAction::triggered, this, &MainWindow::onEditCredentials);
     connect(actEditPlayers, &QAction::triggered, this, &MainWindow::onEditPlayers);
+    connect(actSave, &QAction::triggered, this, &MainWindow::onSave);
 }
 
 void MainWindow::onOpen()
@@ -79,8 +86,18 @@ void MainWindow::onClose()
 {
     /* TODO: CentralView reset; actClose->setEnabled(false); */
 }
+
+void MainWindow::onSave()
+{
+    service_.commit();
+    service_.begin();
+    statusBar()->showMessage("Gespeichert...");
+}
+
+
 void MainWindow::onQuit()
 {
+    // edit save options
     close();
 }            // oder QApplication::quit()
 void MainWindow::onAbout()
@@ -94,7 +111,19 @@ void MainWindow::onEditCredentials()
 }
 void MainWindow::onEditPlayers()
 {
-
+    PlayersDialog dlg(this);
+    if (dlg.exec() == QDialog::Accepted)
+    {
+        std::vector<std::string> players = dlg.result();
+        if (players.size() > 2)
+        {
+            service_.loginUsers(players);
+            model_->setReady(true);
+        }
+    }
+    central_->refresh();
+    model_->reload();
+    QTimer::singleShot(0, central_, &CentralView::prefetchIfNeeded);
 }
 
 

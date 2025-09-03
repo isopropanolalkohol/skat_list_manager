@@ -27,7 +27,7 @@ class MainWindow : public QMainWindow
 
     EntriesTableModel* model_ = nullptr;
     CentralView* central_ = nullptr;
-
+    bool saved_;
     void createActions();
     void buildMenus();
     void buildStatusBar();
@@ -37,6 +37,7 @@ class MainWindow : public QMainWindow
     QAction* actClose = nullptr;
     QAction* actQuit = nullptr;
     QAction* actAbout = nullptr;
+    QAction* actSave = nullptr;
     QAction* actEditCredentials = nullptr;
     QAction* actEditPlayers = nullptr;
     QMenu*   menuFile = nullptr;
@@ -50,5 +51,6 @@ class MainWindow : public QMainWindow
     void onAbout();
     void onEditCredentials();
     void onEditPlayers();
+    void onSave();
     void refreshTable();
 };

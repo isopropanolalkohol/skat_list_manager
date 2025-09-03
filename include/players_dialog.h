@@ -5,6 +5,8 @@
 #pragma once
 
 #include <QDialog>
+#include <QDialogButtonBox>
+#include <QPlainTextEdit>
 
 class PlayersDialog : public QDialog
 {
@@ -12,6 +14,9 @@ class PlayersDialog : public QDialog
     public:
     explicit PlayersDialog(QWidget *parent = nullptr);
 
-private:
+    std::vector<std::string> result() const;
+    private:
+    QPlainTextEdit* namesEdit_ = nullptr;
+    QDialogButtonBox* buttonBox_ = nullptr;
 
 };

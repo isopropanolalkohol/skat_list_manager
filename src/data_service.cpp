@@ -7,17 +7,11 @@
 #include <qlist.h>
 #include <QString>
 
-DataService::DataService(DatabaseAPI &db) : db_(db)
-{
-    // DEBUG: REMOVE
-    db.changeList();
-    db.createNewTable();
-    db.setListId();
-}
+DataService::DataService(DatabaseAPI &db) : db_(db){}
 
-std::vector<TableGameEntry> DataService::getEntries() const
+std::vector<TableGameEntry> DataService::getEntries(const int limit, const int offset) const
 {
-    return db_.getEntries(20);
+    return db_.getEntries(limit, offset);
 }
 
 QStringList DataService::getPlayerNames()
@@ -25,3 +19,29 @@ QStringList DataService::getPlayerNames()
     QStringList pnames;
     return pnames;
 }
+
+void DataService::loginUsers(const std::vector<std::string> players)
+{
+    db_.clearUsers();
+    for (const auto& player : players)
+    {
+        db_.loginUser(to_upper(player));
+    }
+    if (players.size() < 3) return;
+    db_.createNewTable();
+    db_.setListId();
+}
+
+void DataService::begin() const
+{
+    db_.startTransaction();
+}
+void DataService::commit() const
+{
+    db_.commitTransaction();
+}
+void DataService::rollback() const
+{
+    db_.rollbackTransaction();
+}
+

@@ -322,6 +322,7 @@ void DatabaseAPI::setListId()
     if (int id = getTableId(); id != 0)
     {
         currentListId_ = id;
+        //std::cout << id << std::endl;
         return;
     }
     else
@@ -439,14 +440,15 @@ std::vector<std::string> DatabaseAPI::getEntriesString() const
     return entries;
 }
 
-std::vector<TableGameEntry> DatabaseAPI::getEntries(const int n) const
+std::vector<TableGameEntry> DatabaseAPI::getEntries(const int limit, const int offset) const
 {
     std::vector<TableGameEntry> entries;
     try
     {
-        sql::PreparedStatement* get_games_query = connection_->prepareStatement("SELECT players.name, played_games.hasWon, possibleGames.typeName, possibleGames.peaks, possibleGames.modifierName, possibleGames.value, played_games.time FROM played_games JOIN possibleGames ON played_games.playedGameID = possibleGames.gameID JOIN players ON played_games.playerID = players.playerID WHERE played_games.listID = ? ORDER BY played_games.time DESC LIMIT ?");
+        sql::PreparedStatement* get_games_query = connection_->prepareStatement("SELECT players.name, played_games.hasWon, possibleGames.typeName, possibleGames.peaks, possibleGames.modifierName, possibleGames.value, played_games.time, played_games.gameID FROM played_games JOIN possibleGames ON played_games.playedGameID = possibleGames.gameID JOIN players ON played_games.playerID = players.playerID WHERE played_games.listID = ? AND played_games.gameID < ? ORDER BY played_games.gameID DESC LIMIT ?");
         get_games_query->setInt(1, currentListId_);
-        get_games_query->setInt(2, n);
+        get_games_query->setInt(2, offset);
+        get_games_query->setInt(3, limit);
         sql::ResultSet* result_set = get_games_query->executeQuery();
         while (result_set->next())
         {
@@ -458,6 +460,7 @@ std::vector<TableGameEntry> DatabaseAPI::getEntries(const int n) const
             entry.ModifierName = result_set->getString(5);
             entry.value = result_set->getInt(6);
             entry.dateTime = result_set->getString(7);
+            entry.id = result_set->getInt(8);
             entries.push_back(entry);
         }
         delete result_set;
