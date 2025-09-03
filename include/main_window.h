@@ -33,6 +33,10 @@ class MainWindow : public QMainWindow
     void buildStatusBar();
     void connectActions();
 
+    void markDirty();
+    void markClean();
+    [[nodiscard]] bool maybeSave() const;
+
     QAction* actOpen = nullptr;
     QAction* actClose = nullptr;
     QAction* actQuit = nullptr;

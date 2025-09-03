@@ -131,3 +131,19 @@ void MainWindow::refreshTable()
 {
     auto rows = nullptr;
 }
+
+void MainWindow::markClean()
+{
+    saved_ = true;
+}
+
+void MainWindow::markDirty()
+{
+    saved_ = false;
+}
+
+bool MainWindow::maybeSave() const
+{
+    return !saved_;
+}
+
