@@ -4,6 +4,7 @@
 #include "main_window.h"
 #include <QWidget>
 #include <QTimer>
+#include <QMessageBox>
 
 #include "players_dialog.h"
 
@@ -21,6 +22,19 @@ MainWindow::MainWindow(DataService& ds, QWidget* parent) : QMainWindow(parent), 
     setCentralWidget(central_);
     QTimer::singleShot(0, this, &MainWindow::onEditPlayers);
 }
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    qDebug() << "[closeEvent] called";
+    if (!maybeSave()) {
+        qDebug() << "[closeEvent] ignore";
+        event->ignore();
+        return;
+    }
+    qDebug() << "[closeEvent] accept";
+    event->accept();
+}
+
 
 void MainWindow::createActions()
 {
@@ -43,6 +57,8 @@ void MainWindow::createActions()
 
     actEditPlayers = new QAction(tr("Spieler"), this);
 
+    actDebugDirty = new QAction(tr("debug->dirty"), this);
+
 }
 
 void MainWindow::buildMenus()
@@ -57,6 +73,7 @@ void MainWindow::buildMenus()
     menuDatabase = menuBar()->addMenu(tr("Datenbank"));
     menuDatabase->addAction(actEditCredentials);
     menuDatabase->addAction(actEditPlayers);
+    menuDatabase->addAction(actDebugDirty);
 
     menuHelp = menuBar()->addMenu(tr("Hilfe"));
     menuHelp->addAction(actAbout);
@@ -76,6 +93,7 @@ void MainWindow::connectActions()
     connect(actEditCredentials, &QAction::triggered, this, &MainWindow::onEditCredentials);
     connect(actEditPlayers, &QAction::triggered, this, &MainWindow::onEditPlayers);
     connect(actSave, &QAction::triggered, this, &MainWindow::onSave);
+    connect(actDebugDirty, &QAction::triggered, this, &MainWindow::markDirty);
 }
 
 void MainWindow::onOpen()
@@ -91,7 +109,7 @@ void MainWindow::onSave()
 {
     service_.commit();
     service_.begin();
-    statusBar()->showMessage("Gespeichert...");
+    statusBar()->showMessage("Gespeichert...", 2000);
 }
 
 
@@ -134,16 +152,26 @@ void MainWindow::refreshTable()
 
 void MainWindow::markClean()
 {
-    saved_ = true;
+    dirty_ = false;
 }
 
 void MainWindow::markDirty()
 {
-    saved_ = false;
+    dirty_ = true;
 }
 
-bool MainWindow::maybeSave() const
+bool MainWindow::maybeSave()
 {
-    return !saved_;
+    if (!dirty_) return true;
+    auto ret  = QMessageBox::question(this, tr("Änderungen speichern?"), tr("Es gibt ungespeicherte Änderungen"),
+        QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Save);
+    if (ret == QMessageBox::Save)
+    {
+        service_.commit();
+        service_.begin();
+        return true;
+    }
+    if (ret == QMessageBox::Discard) return true;
+    return false;
 }
 

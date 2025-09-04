@@ -22,12 +22,14 @@ class MainWindow : public QMainWindow
     public:
     explicit MainWindow(DataService& ds, QWidget* parent = nullptr);
 
+    void closeEvent(QCloseEvent* event) override;
+
     private:
     DataService& service_;
 
     EntriesTableModel* model_ = nullptr;
     CentralView* central_ = nullptr;
-    bool saved_;
+    bool dirty_;
     void createActions();
     void buildMenus();
     void buildStatusBar();
@@ -35,7 +37,7 @@ class MainWindow : public QMainWindow
 
     void markDirty();
     void markClean();
-    [[nodiscard]] bool maybeSave() const;
+    [[nodiscard]] bool maybeSave();
 
     QAction* actOpen = nullptr;
     QAction* actClose = nullptr;
@@ -44,6 +46,7 @@ class MainWindow : public QMainWindow
     QAction* actSave = nullptr;
     QAction* actEditCredentials = nullptr;
     QAction* actEditPlayers = nullptr;
+    QAction* actDebugDirty = nullptr;
     QMenu*   menuFile = nullptr;
     QMenu*   menuDatabase = nullptr;
     QMenu*   menuHelp = nullptr;
