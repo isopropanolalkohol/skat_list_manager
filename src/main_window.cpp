@@ -25,13 +25,11 @@ MainWindow::MainWindow(DataService& ds, QWidget* parent) : QMainWindow(parent), 
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    qDebug() << "[closeEvent] called";
-    if (!maybeSave()) {
-        qDebug() << "[closeEvent] ignore";
+    if (!maybeSave())
+        {
         event->ignore();
         return;
     }
-    qDebug() << "[closeEvent] accept";
     event->accept();
 }
 
