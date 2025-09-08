@@ -3,7 +3,7 @@
 //
 
 #include "data_service.h"
-
+#include "player_stats.h"
 #include <qlist.h>
 #include <QString>
 
@@ -43,5 +43,19 @@ void DataService::commit() const
 void DataService::rollback() const
 {
     db_.rollbackTransaction();
+}
+
+std::vector<PlayerPoint> DataService::getPoints() const
+{
+    std::vector<PlayerPoint> points;
+    const std::unordered_map<std::string, int> result = db_.getPoints();
+    points.reserve(result.size());
+    for (const auto& entry : result)
+    {
+        PlayerPoint point = {entry.first, entry.second};
+        points.emplace_back(point);
+    }
+    std::sort(points.begin(), points.end(), [](const PlayerPoint &a, const PlayerPoint &b){return a.score < b.score;});
+    return points;
 }
 

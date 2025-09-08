@@ -7,6 +7,7 @@
 #include "database_api.h"
 #include "skat.h"
 #include <QString>
+class PlayerPoint;
 
 class DataService
 {
@@ -15,6 +16,7 @@ class DataService
 
     [[nodiscard]] std::vector<TableGameEntry> getEntries(int limit, int offset) const;
     QStringList getPlayerNames();
+    [[nodiscard]] std::vector<PlayerPoint> getPoints() const;
     void loginUsers(std::vector<std::string> players);
     void rollback() const;
     void commit() const;

@@ -127,8 +127,7 @@ void MainWindow::onEditCredentials()
 }
 void MainWindow::onEditPlayers()
 {
-    PlayersDialog dlg(this);
-    if (dlg.exec() == QDialog::Accepted)
+    if (PlayersDialog dlg(this); dlg.exec() == QDialog::Accepted)
     {
         std::vector<std::string> players = dlg.result();
         if (players.size() > 2)

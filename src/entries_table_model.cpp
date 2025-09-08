@@ -2,6 +2,9 @@
 // Created by joshua on 29.08.25.
 //
 #include "entries_table_model.h"
+
+#include <qbrush.h>
+
 #include "skat.h" //to stop the compiler from bitching
 #include <QVariant>
 EntriesTableModel::EntriesTableModel(DataService& ds, QObject *parent) : QAbstractTableModel(parent), ds_(ds){}
@@ -21,6 +24,14 @@ QVariant EntriesTableModel::data(const QModelIndex& idx, int role) const {
     if (!idx.isValid()) return {};
     const auto r = static_cast<size_t>(idx.row());
     const auto c = static_cast<Column>(idx.column());
+
+    if (role == Qt::ForegroundRole && static_cast<Column>(idx.column()) == ColValue) {
+        const auto e = rows_[idx.row()];
+        const int p = (3*e.hasWon - 2)*e.value;     // oder passender Typ
+        if (p > 0) return QBrush(QColor(Qt::darkGreen));
+        if (p < 0) return QBrush(QColor(Qt::red));
+        // p == 0 -> Standardfarbe des Themes
+    }
 
     if (role == Qt::DisplayRole) {
         const auto& e = rows_[r];  // GameEntry

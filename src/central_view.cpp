@@ -65,6 +65,7 @@ void CentralView::setModel(EntriesTableModel *model)
 void CentralView::refresh() const
 {
     if (model_) model_->reload();
+    boxStats_->reload();
     /*qDebug() << "[after reload] rows =" << model_->rowCount()
          << "canFetchMore =" << model_->canFetchMore({});*/
 }
@@ -81,3 +82,6 @@ void CentralView::prefetchIfNeeded()
     qDebug() << "[prefetch] rows =" << model_->rowCount()
          << "canFetchMore =" << model_->canFetchMore({});*/
 }
+
+
+
