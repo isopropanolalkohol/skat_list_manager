@@ -7,6 +7,7 @@
 #include <QMessageBox>
 
 #include "players_dialog.h"
+#include "central_view.h"
 
 MainWindow::MainWindow(DataService& ds, QWidget* parent) : QMainWindow(parent), ds_(ds) {
     setWindowTitle("Skat-Listen-Manager");
@@ -15,12 +16,13 @@ MainWindow::MainWindow(DataService& ds, QWidget* parent) : QMainWindow(parent), 
     createActions();
     buildMenus();
     buildStatusBar();
-    connectActions();
     model_   = new EntriesTableModel(ds_, this);
     central_ = new CentralView(ds_, this);
     central_->setModel(model_);
     setCentralWidget(central_);
     QTimer::singleShot(0, this, &MainWindow::onEditPlayers);
+    connectActions();
+
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -92,6 +94,15 @@ void MainWindow::connectActions()
     connect(actEditPlayers, &QAction::triggered, this, &MainWindow::onEditPlayers);
     connect(actSave, &QAction::triggered, this, &MainWindow::onSave);
     connect(actDebugDirty, &QAction::triggered, this, &MainWindow::markDirty);
+
+    connect(central_, &CentralView::actionTriggered, this,
+        [this](CentralView::Action a)
+        {
+        switch (static_cast<CentralView::Action>(a))
+        {
+            case CentralView::Action::Add: onAddEntry(); break;
+        }
+    });
 }
 
 void MainWindow::onOpen()
@@ -172,3 +183,7 @@ bool MainWindow::maybeSave()
     return false;
 }
 
+void MainWindow::onAddEntry()
+{
+    statusBar()->showMessage("Adding entry...", 2000);
+}

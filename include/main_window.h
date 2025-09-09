@@ -29,7 +29,7 @@ class MainWindow : public QMainWindow
 
     EntriesTableModel* model_ = nullptr;
     CentralView* central_ = nullptr;
-    bool dirty_;
+    bool dirty_ = false;
     void createActions();
     void buildMenus();
     void buildStatusBar();
@@ -60,4 +60,5 @@ class MainWindow : public QMainWindow
     void onEditPlayers();
     void onSave();
     void refreshTable();
+    void onAddEntry();
 };

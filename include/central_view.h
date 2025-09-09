@@ -7,6 +7,7 @@
 #include <QWidget>
 #include <QSplitter>
 #include <QGroupBox>
+#include <QPushButton>
 
 #include "player_stats.h"
 
@@ -15,6 +16,9 @@ class EntriesTableModel;
 
 class CentralView : public QWidget
 {
+    public:
+    enum class Action {Add=1};
+
     Q_OBJECT
     public:
     explicit CentralView(DataService& ds,QWidget *parent = nullptr);
@@ -33,4 +37,9 @@ class CentralView : public QWidget
     PlayerStats* boxStats_ = nullptr;
     QGroupBox* boxPlayedGamesStatistics_ = nullptr;
     QGroupBox* boxActions_ = nullptr;
+    QButtonGroup* actionsGroup_ = nullptr;
+
+    signals:
+    void actionTriggered(CentralView::Action);
+
 };

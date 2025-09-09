@@ -8,8 +8,11 @@
 #include <QTableView>
 #include <QAbstractItemView>
 #include <QHeaderView>
+#include <QPushButton>
 #include <QVBoxLayout>
 #include <QTimer>
+#include <QToolButton>
+#include <QButtonGroup>
 
 CentralView::CentralView(DataService& ds, QWidget* parent) : QWidget(parent), ds_(ds)
 {
@@ -33,12 +36,33 @@ CentralView::CentralView(DataService& ds, QWidget* parent) : QWidget(parent), ds
     auto* layout2 = new QVBoxLayout(boxPlayedGamesStatistics_);
     layout2->addStretch();
     layout2->setContentsMargins(12,12,12,12);
-    auto* layout3 = new QVBoxLayout(boxActions_);
-    layout3->addStretch();
-    layout3->setContentsMargins(12,12,12,12);
 
+    auto* actionLayout = new QGridLayout(boxActions_);
+    actionLayout->setContentsMargins(12,12,12,12);
+    actionLayout->setHorizontalSpacing(8);
+    actionLayout->setVerticalSpacing(8);
+    actionLayout->setAlignment(Qt::AlignCenter);
+    actionLayout->setColumnStretch(0,1);
+    actionLayout->setColumnStretch(1,1);
+    actionLayout->setColumnStretch(2,1);
+    actionLayout->setRowStretch(0,1);
+    actionLayout->setRowStretch(1,1);
 
+    //add entry button
+    auto* addEntryButton = new QToolButton(boxActions_);
+    addEntryButton->setText(tr("Eintrag hinzufügen"));
+    addEntryButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    addEntryButton->setIcon(QIcon(":/icons/addEntry.svg"));
+    addEntryButton->setIconSize(QSize(24,24));
+    addEntryButton->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
 
+    actionsGroup_ = new QButtonGroup(this);
+    actionsGroup_->setExclusive(false);
+    actionsGroup_->addButton(addEntryButton, static_cast<int>(Action::Add));
+    actionLayout->addWidget(addEntryButton, 0, 0, Qt::AlignCenter);
+
+    connect(actionsGroup_, &QButtonGroup::idClicked, this,
+            [this](int id){ emit actionTriggered(static_cast<Action>(id)); });
     rightSplit_->setStretchFactor(0,1);
     rightSplit_->setStretchFactor(1,1);
     rightSplit_->setStretchFactor(2,1);

@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/icons">
         <file>desktop.png</file>
+        <file>addEntry.svg</file>
     </qresource>
 </RCC>
