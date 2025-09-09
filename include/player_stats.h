@@ -44,6 +44,7 @@ class PlayerRowWidget : public QWidget
 
 
     private:
+
     QLabel *name_ = nullptr;
     QLabel *score_ = nullptr;
 };

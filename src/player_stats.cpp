@@ -31,6 +31,7 @@ void PlayerStats::reload()
         delete item;
     }
     std::vector<PlayerPoint> stats = ds_.getPoints();
+    std::ranges::reverse(stats);
     for (const auto &p : stats)
     {
         auto* row = new PlayerRowWidget(this);

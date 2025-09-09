@@ -8,7 +8,7 @@
 
 #include "players_dialog.h"
 
-MainWindow::MainWindow(DataService& ds, QWidget* parent) : QMainWindow(parent), service_(ds) {
+MainWindow::MainWindow(DataService& ds, QWidget* parent) : QMainWindow(parent), ds_(ds) {
     setWindowTitle("Skat-Listen-Manager");
     resize(1100, 700);
 
@@ -16,8 +16,8 @@ MainWindow::MainWindow(DataService& ds, QWidget* parent) : QMainWindow(parent), 
     buildMenus();
     buildStatusBar();
     connectActions();
-    model_   = new EntriesTableModel(service_, this);
-    central_ = new CentralView(this);
+    model_   = new EntriesTableModel(ds_, this);
+    central_ = new CentralView(ds_, this);
     central_->setModel(model_);
     setCentralWidget(central_);
     QTimer::singleShot(0, this, &MainWindow::onEditPlayers);
@@ -105,8 +105,8 @@ void MainWindow::onClose()
 
 void MainWindow::onSave()
 {
-    service_.commit();
-    service_.begin();
+    ds_.commit();
+    ds_.begin();
     statusBar()->showMessage("Gespeichert...", 2000);
 }
 
@@ -132,7 +132,7 @@ void MainWindow::onEditPlayers()
         std::vector<std::string> players = dlg.result();
         if (players.size() > 2)
         {
-            service_.loginUsers(players);
+            ds_.loginUsers(players);
             model_->setReady(true);
         }
     }
@@ -164,8 +164,8 @@ bool MainWindow::maybeSave()
         QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Save);
     if (ret == QMessageBox::Save)
     {
-        service_.commit();
-        service_.begin();
+        ds_.commit();
+        ds_.begin();
         return true;
     }
     if (ret == QMessageBox::Discard) return true;

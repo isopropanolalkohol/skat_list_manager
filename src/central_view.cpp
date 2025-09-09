@@ -11,7 +11,7 @@
 #include <QVBoxLayout>
 #include <QTimer>
 
-CentralView::CentralView(QWidget* parent) : QWidget(parent)
+CentralView::CentralView(DataService& ds, QWidget* parent) : QWidget(parent), ds_(ds)
 {
     split_ = new QSplitter(Qt::Horizontal, this);
 
@@ -24,17 +24,16 @@ CentralView::CentralView(QWidget* parent) : QWidget(parent)
 
     rightSplit_ = new QSplitter(Qt::Vertical, split_);
 
-    boxStats_ = new QGroupBox(tr("Gesamtpunkte"), rightSplit_);
+    boxActions_ = new QGroupBox(tr("Aktionen"), rightSplit_);
+    boxStats_ = new PlayerStats(ds_, rightSplit_);
     boxPlayedGamesStatistics_ = new QGroupBox(tr("Gespielte Spiele"), rightSplit_);
-    boxToBeRenamed_ = new QGroupBox(tr("Baustelle"), rightSplit_);
 
-    auto* layout1 = new QVBoxLayout(boxStats_);
-    layout1->addStretch();
-    layout1->setContentsMargins(12,12,12,12);
+
+
     auto* layout2 = new QVBoxLayout(boxPlayedGamesStatistics_);
     layout2->addStretch();
     layout2->setContentsMargins(12,12,12,12);
-    auto* layout3 = new QVBoxLayout(boxToBeRenamed_);
+    auto* layout3 = new QVBoxLayout(boxActions_);
     layout3->addStretch();
     layout3->setContentsMargins(12,12,12,12);
 
@@ -82,6 +81,5 @@ void CentralView::prefetchIfNeeded()
     qDebug() << "[prefetch] rows =" << model_->rowCount()
          << "canFetchMore =" << model_->canFetchMore({});*/
 }
-
 
 

@@ -25,7 +25,7 @@ class MainWindow : public QMainWindow
     void closeEvent(QCloseEvent* event) override;
 
     private:
-    DataService& service_;
+    DataService& ds_;
 
     EntriesTableModel* model_ = nullptr;
     CentralView* central_ = nullptr;
