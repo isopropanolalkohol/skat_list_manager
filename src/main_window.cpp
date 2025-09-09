@@ -6,6 +6,7 @@
 #include <QTimer>
 #include <QMessageBox>
 
+#include "add_entry_dialog.h"
 #include "players_dialog.h"
 #include "central_view.h"
 
@@ -126,7 +127,7 @@ void MainWindow::onQuit()
 {
     // edit save options
     close();
-}            // oder QApplication::quit()
+}
 void MainWindow::onAbout()
 {
     QMessageBox::about(this, tr("Über"), tr("Skat List Manager"));
@@ -186,4 +187,13 @@ bool MainWindow::maybeSave()
 void MainWindow::onAddEntry()
 {
     statusBar()->showMessage("Adding entry...", 2000);
+    AddEntryDialog dlg(ds_, this);
+    if (dlg.exec() != QDialog::Accepted)
+    {
+        return;
+    }
+
+    auto entry = dlg.result();
+
+
 }

@@ -10,7 +10,7 @@
 #include <QDialogButtonBox>
 #include <QPushButton>
 
-AddEntryDialog::AddEntryDialog(QWidget* parent) : QDialog(parent)
+AddEntryDialog::AddEntryDialog(DataService& ds, QWidget* parent) : QDialog(parent), ds_(ds)
 {
     playerChoiceBox_ = new QComboBox(this);
     typeBox_ = new QComboBox(this);

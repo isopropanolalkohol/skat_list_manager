@@ -6,6 +6,7 @@
 
 #include <QDialog>
 #include <QString>
+#include "data_service.h"
 
 class QLineEdit;
 class QComboBox;
@@ -18,12 +19,12 @@ class AddEntryDialog : public QDialog
 {
     Q_OBJECT
     public:
-    explicit AddEntryDialog(QWidget *parent = nullptr);
+    explicit AddEntryDialog(DataService& ds,QWidget *parent = nullptr);
 
     void setPlayers(const QList<QString> &playerNames);
 
 
-    GameEntry result() const;
+    [[nodiscard]] GameEntry result() const;
 
     void setTypes(const QStringList &types);
 
@@ -33,6 +34,8 @@ class AddEntryDialog : public QDialog
     QComboBox *peaksChoiceBox_ = nullptr;
     QComboBox *modifierChoiceBox_ = nullptr;
     QDialogButtonBox *buttons_ = nullptr;
+
+    DataService& ds_;
 
     void updateOkEnabled();
 };

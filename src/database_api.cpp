@@ -17,19 +17,19 @@ DatabaseAPI::DatabaseAPI()
         sql::Driver* driver = sql::mysql::get_driver_instance();
         connection_ = driver->connect("tcp://127.0.0.1:3306", "skat_api", "skat_api");
         connection_->setSchema("skat_lists");
-        std::cout << "slm >: Connected successfully!" << std::endl;
+        //std::cout << "slm >: Connected successfully!" << std::endl;
         currentListId_ = -1;
     } catch (sql::SQLException& e)
     {
-        std::cout << "slm >: error occurred. Database was not opened. Error: " << e.what() << std::endl;
+        //std::cout << "slm >: error occurred. Database was not opened. Error: " << e.what() << std::endl;
         return;
     }
 }
 DatabaseAPI::~DatabaseAPI()
 {
     delete connection_;
-    std::cout << "slm >: closed database connection_" << std::endl;
-    std::cout << "slm >: Bye!" << std::endl;
+    //std::cout << "slm >: closed database connection_" << std::endl;
+    //std::cout << "slm >: Bye!" << std::endl;
 
 }
 void DatabaseAPI::startTransaction() const
@@ -148,7 +148,7 @@ std::unordered_map<std::string, int> DatabaseAPI::getPoints() const
     std::unordered_map<std::string, int> result;
     for (const auto& player : players_)
     {
-        sql::PreparedStatement* points_query = connection_->prepareStatement("SELECT SUM((played_games.hasWon*3-2)*possibleGames.value) AS 'points' FROM played_games JOIN possibleGames ON played_games.playedGameID = possibleGames.gameID WHERE playerId = ? AND listID = ?");
+        sql::PreparedStatement* points_query = connection_->prepareStatement("SELECT SUM((played_games.hasWon*3-2)*possibleGames.score) AS 'points' FROM played_games JOIN possibleGames ON played_games.playedGameID = possibleGames.gameID WHERE playerId = ? AND listID = ?");
         points_query->setInt(1, getUserId(player));
         points_query->setInt(2, currentListId_);
         sql::ResultSet* result_set = points_query->executeQuery();
@@ -381,7 +381,7 @@ void DatabaseAPI::pushEntry(GameEntry entry) const
     {
         //get id
         sql::PreparedStatement* get_id_query = connection_->prepareStatement(
-            "SELECT gameID FROM possibleGames WHERE value = ? AND typeName = ? AND peaks = ? AND modifierName = ?");
+            "SELECT gameID FROM possibleGames WHERE score = ? AND typeName = ? AND peaks = ? AND modifierName = ?");
         get_id_query->setInt(1,calculate_game_value(entry));
         get_id_query->setString(2, return_type_name(entry.type));
         get_id_query->setInt(3, entry.peaks);
@@ -393,7 +393,7 @@ void DatabaseAPI::pushEntry(GameEntry entry) const
             int id = result_set->getInt(1);
             //std::cout << "Game found with id: " << id << std::endl;
             sql::PreparedStatement* insert_query =
-                connection_->prepareStatement("INSERT INTO played_games(playedGameID, playerID, listID, hasWon, time) VALUES (?,?,?,?, CURRENT_TIMESTAMP)");
+                connection_->prepareStatement("INSERT INTO played_games(playedGameID, playerID, listID, hasWon, playedAt) VALUES (?,?,?,?, CURRENT_TIMESTAMP)");
             insert_query->setInt(1, id);
             insert_query->setInt(2, entry.user_id);
             insert_query->setInt(3, currentListId_);
@@ -418,7 +418,7 @@ std::vector<std::string> DatabaseAPI::getEntriesString() const
     std::vector<std::string> entries;
     try
     {
-        sql::PreparedStatement* get_games_query = connection_->prepareStatement("SELECT players.name, possibleGames.typeName, possibleGames.peaks, possibleGames.modifierName, possibleGames.value, played_games.time, played_games.hasWon FROM played_games JOIN players ON players.playerID = played_games.playerID JOIN possibleGames ON played_games.playedGameID = possibleGames.gameID WHERE listID = ? ORDER BY played_games.gameID DESC LIMIT 10");
+        sql::PreparedStatement* get_games_query = connection_->prepareStatement("SELECT players.name, possibleGames.typeName, possibleGames.peaks, possibleGames.modifierName, possibleGames.score, played_games.playedAt, played_games.hasWon FROM played_games JOIN players ON players.playerID = played_games.playerID JOIN possibleGames ON played_games.playedGameID = possibleGames.gameID WHERE listID = ? ORDER BY played_games.gameID DESC LIMIT 10");
         get_games_query->setInt(1, currentListId_);
         sql::ResultSet* result_set = get_games_query->executeQuery();
         while (result_set->next())
@@ -445,7 +445,7 @@ std::vector<TableGameEntry> DatabaseAPI::getEntries(const int limit, const int o
     std::vector<TableGameEntry> entries;
     try
     {
-        sql::PreparedStatement* get_games_query = connection_->prepareStatement("SELECT players.name, played_games.hasWon, possibleGames.typeName, possibleGames.peaks, possibleGames.modifierName, possibleGames.value, played_games.time, played_games.gameID FROM played_games JOIN possibleGames ON played_games.playedGameID = possibleGames.gameID JOIN players ON played_games.playerID = players.playerID WHERE played_games.listID = ? AND played_games.gameID < ? ORDER BY played_games.gameID DESC LIMIT ?");
+        sql::PreparedStatement* get_games_query = connection_->prepareStatement("SELECT players.name, played_games.hasWon, possibleGames.typeName, possibleGames.peaks, possibleGames.modifierName, possibleGames.score, played_games.playedAt, played_games.gameID FROM played_games JOIN possibleGames ON played_games.playedGameID = possibleGames.gameID JOIN players ON played_games.playerID = players.playerID WHERE played_games.listID = ? AND played_games.gameID < ? ORDER BY played_games.gameID DESC LIMIT ?");
         get_games_query->setInt(1, currentListId_);
         get_games_query->setInt(2, offset);
         get_games_query->setInt(3, limit);
