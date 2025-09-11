@@ -6,6 +6,7 @@
 #include "player_stats.h"
 #include <qlist.h>
 #include <QString>
+#include <utility>
 
 DataService::DataService(DatabaseAPI &db) : db_(db){}
 
@@ -57,5 +58,29 @@ std::vector<PlayerPoint> DataService::getPoints() const
     }
     std::sort(points.begin(), points.end(), [](const PlayerPoint &a, const PlayerPoint &b){return a.score < b.score;});
     return points;
+}
+
+std::vector<std::string> DataService::players()
+{
+    playerIDs_ = db_.getAllUserIds();
+    loggedInPlayerNames_ = db_.getUsers();
+    return loggedInPlayerNames_;
+
+}
+
+int DataService::getUserID(std::string username) const
+{
+    if (!playerIDs_.contains(username)) return -1;
+    return playerIDs_.find(username)->second;
+}
+
+int DataService::returnGameValue(GameEntry entry) const
+{
+    return db_.returnGameValue(std::move(entry));
+}
+
+bool DataService::publish(GameEntry entry) const
+{
+    return db_.publishEntry(std::move(entry));
 }
 

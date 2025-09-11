@@ -29,7 +29,7 @@ CentralView::CentralView(DataService& ds, QWidget* parent) : QWidget(parent), ds
 
     boxActions_ = new QGroupBox(tr("Aktionen"), rightSplit_);
     boxStats_ = new PlayerStats(ds_, rightSplit_);
-    boxPlayedGamesStatistics_ = new QGroupBox(tr("Gespielte Spiele"), rightSplit_);
+    boxPlayedGamesStatistics_ = new QGroupBox(tr("Mini-Statistiken"), rightSplit_);
 
 
 

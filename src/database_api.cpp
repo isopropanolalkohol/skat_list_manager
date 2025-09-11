@@ -230,10 +230,10 @@ std::unordered_map<std::string, int> DatabaseAPI::getAllUserIds() const
     std::unordered_map<std::string, int> result;
     sql::Statement* userQuery = connection_->createStatement();
     sql::ResultSet* res = userQuery->executeQuery("SELECT playerID, name FROM players");
-    if (res->next())
+    while (res->next())
     {
-        int id = res->getInt(1);
-        std::string name = res->getString(2);
+        const int id = res->getInt(1);
+        const std::string name = res->getString(2);
         result[name] = id;
     }
     delete userQuery;
@@ -412,6 +412,52 @@ void DatabaseAPI::pushEntry(GameEntry entry) const
         std::cout << "slm >: error occurred: " << e.what() << std::endl;
     }
 }
+bool DatabaseAPI::publishEntry(GameEntry entry) const
+{
+    int id = -1;
+    sql::PreparedStatement* get_id_query = connection_->prepareStatement(
+            "SELECT gameID FROM possibleGames WHERE score = ? AND typeName = ? AND peaks = ? AND modifierName = ?");
+    get_id_query->setInt(1,calculate_game_value(entry));
+    get_id_query->setString(2, return_type_name(entry.type));
+    get_id_query->setInt(3, entry.peaks);
+    get_id_query->setString(4, entry.modifier.name);
+    sql::ResultSet* result_set = get_id_query->executeQuery();
+    if (result_set->next())
+    {
+        id = result_set->getInt(1);
+    }
+    else return false;
+    sql::PreparedStatement* publishQuery = connection_->prepareStatement("INSERT INTO played_games(playedGameID, playerID, listID, hasWon, playedAt) VALUES (?,?,?,?, CURRENT_TIMESTAMP)");
+    publishQuery->setInt(1, id);
+    publishQuery->setInt(2, entry.user_id);
+    publishQuery->setInt(3, currentListId_);
+    publishQuery->setBoolean(4, entry.won);
+    publishQuery->executeQuery();
+    delete publishQuery;
+    return true;
+}
+
+
+int DatabaseAPI::returnGameValue(GameEntry entry) const
+{
+    sql::PreparedStatement* get_id_query = connection_->prepareStatement("SELECT score FROM possibleGames WHERE score = ? AND typeName = ? AND peaks = ? AND modifierName = ?");
+    get_id_query->setInt(1,calculate_game_value(entry));
+    get_id_query->setString(2, return_type_name(entry.type));
+    get_id_query->setInt(3, entry.peaks);
+    get_id_query->setString(4, entry.modifier.name);
+    sql::ResultSet* result_set = get_id_query->executeQuery();
+    delete get_id_query;
+    if (result_set->next())
+    {
+        const int score = result_set->getInt(1);
+        delete result_set;
+        return score;
+    }
+    delete result_set;
+    return -1;
+
+}
+
 
 std::vector<std::string> DatabaseAPI::getEntriesString() const
 {

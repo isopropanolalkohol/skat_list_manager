@@ -30,6 +30,8 @@ struct Modifier
 {
     std::string name;
     int multiplier;
+
+    bool operator==(std::vector<Modifier>::const_reference value) const = default;
 };
 extern std::vector<Modifier> modifiers;
 

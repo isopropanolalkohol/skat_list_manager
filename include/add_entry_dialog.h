@@ -19,23 +19,26 @@ class AddEntryDialog : public QDialog
 {
     Q_OBJECT
     public:
-    explicit AddEntryDialog(DataService& ds,QWidget *parent = nullptr);
+    explicit AddEntryDialog(DataService& ds, QWidget *parent = nullptr);
 
-    void setPlayers(const QList<QString> &playerNames);
-
+    void fillCombos(std::vector<std::string> players);
 
     [[nodiscard]] GameEntry result() const;
-
-    void setTypes(const QStringList &types);
 
     private:
     QComboBox *playerChoiceBox_ = nullptr;
     QComboBox *typeBox_ = nullptr;
     QComboBox *peaksChoiceBox_ = nullptr;
     QComboBox *modifierChoiceBox_ = nullptr;
+    QComboBox *wonChoiceBox_ = nullptr;
     QDialogButtonBox *buttons_ = nullptr;
 
     DataService& ds_;
+    GameEntry out_;
 
     void updateOkEnabled();
+    void onGameChanged();
+    void onAccept();
+    static bool isValidOrDisabled(const QComboBox* cb);
+    void setBoxesToDefault();
 };

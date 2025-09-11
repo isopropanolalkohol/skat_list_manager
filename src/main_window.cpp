@@ -146,11 +146,11 @@ void MainWindow::onEditPlayers()
         {
             ds_.loginUsers(players);
             model_->setReady(true);
+            central_->refresh();
+            model_->reload();
+            QTimer::singleShot(0, central_, &CentralView::prefetchIfNeeded);
         }
     }
-    central_->refresh();
-    model_->reload();
-    QTimer::singleShot(0, central_, &CentralView::prefetchIfNeeded);
 }
 
 
@@ -188,12 +188,19 @@ void MainWindow::onAddEntry()
 {
     statusBar()->showMessage("Adding entry...", 2000);
     AddEntryDialog dlg(ds_, this);
+    dlg.fillCombos(ds_.players());
     if (dlg.exec() != QDialog::Accepted)
     {
         return;
     }
-
-    auto entry = dlg.result();
+    auto data = dlg.result();
+    if (!ds_.publish(data))
+    {
+        QMessageBox::critical(this, tr("Fehler beim Publishen"), tr("Die Datenbank konnte den Eintrag nicht eintragen!"));
+        return;
+    }
+    markDirty();
+    central_->refresh();
 
 
 }
