@@ -1,3 +1,0 @@
-/home/joshua/Programmieren/C++/skat_list_manager/cmake-build-debug/CMakeFiles/skat_list_manager.dir
-/home/joshua/Programmieren/C++/skat_list_manager/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/joshua/Programmieren/C++/skat_list_manager/cmake-build-debug/CMakeFiles/rebuild_cache.dir

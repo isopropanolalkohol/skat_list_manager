@@ -11,42 +11,48 @@
 class DatabaseAPI
 {
     public:
-    DatabaseAPI();
+    explicit DatabaseAPI();
     ~DatabaseAPI();
+    DatabaseAPI(const DatabaseAPI&) = delete;
+    DatabaseAPI& operator=(const DatabaseAPI&) = delete;
 
-    void start_transaction() const;
-    void commit_transaction() const;
-    void rollback_transaction() const;
+    void startTransaction() const;
+    void commitTransaction() const;
+    void rollbackTransaction() const;
 
     //the skat database options:
-    void create_users_if_dont_exist() const;
-    void create_new_table() const;
-    void delete_table() const;
-    std::unordered_map<std::string, int> get_points() const;
-    int get_table_id() const;
-    int get_user_id(std::string username) const;
-    std::string get_user_name(int id) const;
-    void create_user(std::string username) const;
-    void delete_user(std::string username) const;
+    void createUsersIfDontExist() const;
+    void createNewTable() const;
+    void deleteTable() const;
+    std::unordered_map<std::string, int> getPoints() const;
+    int getTableId() const;
+    int getUserId(std::string username) const;
+    std::unordered_map<std::string, int> getAllUserIds() const;
+    std::string getUserName(int id) const;
+    void createUser(std::string username) const;
+    void deleteUser(std::string username) const;
 
-    void login_user(const std::string& username);
-    void logout_user(std::string username);
-    void clear_users();
-    void show_logged_in_users() const;
+    void loginUser(const std::string& username);
+    void logoutUser(std::string username);
+    void clearUsers();
+    void showLoggedInUsers() const;
 
 
-    void set_list_id();
-    void change_list();
-    void push_entry(GameEntry entry) const;
-    std::vector<std::string> get_entries() const;
+    void setListId();
+    void changeList();
+    [[nodiscard]] int returnGameValue(GameEntry entry) const;
+    void pushEntry(GameEntry entry) const;
+    bool publishEntry(GameEntry entry) const;
+    [[nodiscard]] std::vector<std::string> getEntriesString() const;
+    [[nodiscard]] std::vector<TableGameEntry> getEntries(int limit, int offset) const;
 
 //getters
-    int get_list_id() const;
-    std::vector<std::string> get_users() const;
+    int getListId() const;
+    [[nodiscard]] std::vector<std::string> getUsers() const;
     private:
-    sql::Connection* connection;
-    std::vector<std::string> players;
-    int current_list_id;
+    sql::Connection* connection_;
+    std::vector<std::string> players_;
+    int currentListId_;
 };
 
 

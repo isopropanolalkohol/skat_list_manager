@@ -1,4 +1,0 @@
-/home/joshua/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/home/joshua/.local/share/JetBrains/Toolbox/apps/clion/bin/ninja/linux/x64/ninja -G Ninja -S /home/joshua/Programmieren/C++/skat_list_manager -B /home/joshua/Programmieren/C++/skat_list_manager/cmake-build-debug
--- Configuring done (0.0s)
--- Generating done (0.0s)
--- Build files have been written to: /home/joshua/Programmieren/C++/skat_list_manager/cmake-build-debug

@@ -30,6 +30,8 @@ struct Modifier
 {
     std::string name;
     int multiplier;
+
+    bool operator==(std::vector<Modifier>::const_reference value) const = default;
 };
 extern std::vector<Modifier> modifiers;
 
@@ -40,6 +42,18 @@ struct GameEntry
     Modifier modifier;
     int user_id{};
     bool won{};
+};
+
+struct TableGameEntry
+{
+    std::string playerName;
+    std::string GameType;
+    int peaks;
+    std::string ModifierName;
+    int value;
+    bool hasWon;
+    std::string dateTime;
+    int id;
 };
 
 int return_base_value(GameType type);
