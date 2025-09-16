@@ -7,11 +7,11 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     QGuiApplication::setWindowIcon(QIcon(":icons/desktop.png"));
-    app.setApplicationName("Skat List Manager");
-    app.setOrganizationName("GeisslerInc");
+    QApplication::setApplicationName("Skat List Manager");
+    QApplication::setOrganizationName("GeisslerInc");
     DatabaseAPI api;
     DataService ds{api};
     MainWindow w{ds};
     w.show();
-    return app.exec();
+    return QApplication::exec();
 }
