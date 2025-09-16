@@ -176,6 +176,14 @@ void AddEntryDialog::onGameChanged()
             modifierChoiceBox_->setCurrentIndex(0);
         }
         modifierChoiceBox_->setEnabled(true);
+        {
+            QSignalBlocker b5(wonChoiceBox_);
+            wonChoiceBox_->clear();
+            wonChoiceBox_->addItem(QObject::tr("- bitte wählen -"), QVariant());
+            wonChoiceBox_->addItem(QString::fromUtf8("Gewonnen"), 1);
+            wonChoiceBox_->addItem(QString::fromUtf8("Verloren"), 0);
+            wonChoiceBox_->setCurrentIndex(0);
+        }
         wonChoiceBox_->setEnabled(true);
     }
     else if (gameType == RAMSCH)
@@ -239,6 +247,14 @@ void AddEntryDialog::onGameChanged()
             modifierChoiceBox_->setCurrentIndex(0);
         }
         modifierChoiceBox_->setEnabled(true);
+        {
+            QSignalBlocker b5(wonChoiceBox_);
+            wonChoiceBox_->clear();
+            wonChoiceBox_->addItem(QObject::tr("- bitte wählen -"), QVariant());
+            wonChoiceBox_->addItem(QString::fromUtf8("Gewonnen"), 1);
+            wonChoiceBox_->addItem(QString::fromUtf8("Verloren"), 0);
+            wonChoiceBox_->setCurrentIndex(0);
+        }
         wonChoiceBox_->setEnabled(true);
     }
     updateOkEnabled();
@@ -251,8 +267,7 @@ bool AddEntryDialog::isValidOrDisabled(const QComboBox *cb)
 void AddEntryDialog::onAccept()
 {
     if (!typeBox_->currentData().isValid()
-      || !playerChoiceBox_->currentData().isValid()
-      || !modifierChoiceBox_->currentData().isValid()) {
+      || !playerChoiceBox_->currentData().isValid()) {
         QMessageBox::warning(this, tr("Eingabe unvollständig"), tr("Bitte alle Pflichtfelder wählen."));
         return;
       }
