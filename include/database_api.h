@@ -26,23 +26,23 @@ class DatabaseAPI
     void deleteTable() const;
     std::unordered_map<std::string, int> getPoints() const;
     int getTableId() const;
-    int getUserId(std::string username) const;
+    int getUserId(const std::string &username) const;
     std::unordered_map<std::string, int> getAllUserIds() const;
     std::string getUserName(int id) const;
-    void createUser(std::string username) const;
+    void createUser(const std::string &username) const;
     void deleteUser(std::string username) const;
 
     void loginUser(const std::string& username);
-    void logoutUser(std::string username);
+    void logoutUser(const std::string &username);
     void clearUsers();
     void showLoggedInUsers() const;
 
 
     void setListId();
     void changeList();
-    [[nodiscard]] int returnGameValue(GameEntry entry) const;
-    void pushEntry(GameEntry entry) const;
-    bool publishEntry(GameEntry entry) const;
+    [[nodiscard]] int returnGameValue(const GameEntry &entry) const;
+    void pushEntry(const GameEntry &entry) const;
+    bool publishEntry(const GameEntry &entry) const;
     [[nodiscard]] std::vector<std::string> getEntriesString() const;
     [[nodiscard]] std::vector<TableGameEntry> getEntries(int limit, int offset) const;
 
@@ -59,10 +59,10 @@ class DatabaseAPI
 
 
 
-std::string to_upper(std::string str);
+std::string to_upper(const std::string &str);
 std::string generate_tuple_with_question_mark(const int count);
 bool isAlpha(std::string const &str);
 bool validate_names(std::vector<std::string> players);
-std::string getTableName(std::vector<std::string> players);
+std::string getTableName(const std::vector<std::string>& players);
 
 #endif //DATABASE_API_H
